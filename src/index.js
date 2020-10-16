@@ -32,7 +32,7 @@ ReactDOM.render(
       domain={process.env.REACT_APP_DOMAIN}
       client_id={process.env.REACT_APP_CLIENTID}
       redirect_uri={window.location.origin}
-      audience={process.env.REACT_APP_AUDIENCE}
+      // audience={process.env.REACT_APP_AUDIENCE}
       onRedirectCallback={onRedirectCallback}
     >
       <App />

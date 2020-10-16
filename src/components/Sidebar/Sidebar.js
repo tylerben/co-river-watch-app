@@ -120,21 +120,7 @@ const Sidebar = (props) => {
       activePath: "map",
       exact: true,
       icon: MapIcon,
-      loginRequired: true,
-    },
-    {
-      link: "authenticated-home",
-      title: "Authenticated Home",
-      activePath: "authenticated-home",
-      icon: SecurityIcon,
-      loginRequired: true,
-    },
-    {
-      link: "data-management/contacts",
-      title: "Data Management",
-      activePath: "data-management",
-      icon: DataManagementIcon,
-      loginRequired: true,
+      loginRequired: false,
     },
   ];
 
@@ -180,7 +166,7 @@ const Sidebar = (props) => {
       </div>
       <List className={classes.nav}>
         {MenuItems.map((item) => returnMenuItem(item, isAuthenticated, user))}
-        {isAuthenticated ? (
+        {/* {isAuthenticated ? (
           <ListItem button>
             <ListItemIcon className={classes.navIcon}>
               <LogoutIcon />
@@ -202,7 +188,7 @@ const Sidebar = (props) => {
               onClick={() => loginWithRedirect()}
             />
           </ListItem>
-        )}
+        )} */}
       </List>
     </div>
   );
