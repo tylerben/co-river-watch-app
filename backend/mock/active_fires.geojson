@@ -1,0 +1,19 @@
+{
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Swift Gulch Fire"
+      },
+      "geometry": {
+        "coordinates": [
+          -106.486735,
+          39.665427
+        ],
+        "type": "Point"
+      },
+      "id": "af8840ad367ec3e3276d1d997dae9206"
+    }
+  ],
+  "type": "FeatureCollection"
+}

@@ -1,0 +1,38 @@
+{
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ten Mile Tailings Pond Dam"
+      },
+      "geometry": {
+        "coordinates": [-106.191, 39.414962],
+        "type": "Point"
+      },
+      "id": "768f947dbe2de73c2bb281192814517f"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Homestake Reservoir Dam"
+      },
+      "geometry": {
+        "coordinates": [-106.462994, 39.368861],
+        "type": "Point"
+      },
+      "id": "a3e032ee7b40b19df6331a3ac7b43a68"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Lake Dillon Dam"
+      },
+      "geometry": {
+        "coordinates": [-106.060677, 39.622615],
+        "type": "Point"
+      },
+      "id": "d071801f8ca9c04e3c2f25ed0a362094"
+    }
+  ],
+  "type": "FeatureCollection"
+}

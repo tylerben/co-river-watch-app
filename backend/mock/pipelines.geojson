@@ -1,0 +1,61 @@
+{
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Eagles Nest Pipeline"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            -106.374954,
+            39.642691
+          ],
+          [
+            -106.38034,
+            39.638544
+          ],
+          [
+            -106.386125,
+            39.618981
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "006166a0af23c02de8a7c14019de9171"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Piney Lake Pipeline"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            -106.425872,
+            39.696129
+          ],
+          [
+            -106.428393,
+            39.697859
+          ],
+          [
+            -106.430369,
+            39.699432
+          ],
+          [
+            -106.439159,
+            39.70567
+          ],
+          [
+            -106.442157,
+            39.706929
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "1d3d21335db64eaa06ae62c3c62bda2f"
+    }
+  ],
+  "type": "FeatureCollection"
+}

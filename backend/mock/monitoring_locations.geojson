@@ -1,0 +1,117 @@
+{
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Near Avon"
+      },
+      "geometry": {
+        "coordinates": [
+          -106.51975,
+          39.630714
+        ],
+        "type": "Point"
+      },
+      "id": "16c02ee7d21c04fa5a57d0c8afd00d8b"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "At West Vail"
+      },
+      "geometry": {
+        "coordinates": [
+          -106.415473,
+          39.630534
+        ],
+        "type": "Point"
+      },
+      "id": "40c0541917e1585b179148ad5ece18be"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Near Edwards"
+      },
+      "geometry": {
+        "coordinates": [
+          -106.588842,
+          39.642846
+        ],
+        "type": "Point"
+      },
+      "id": "5774a10351ca4ed93deb9bd5f706c816"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "At Copper Mountain"
+      },
+      "geometry": {
+        "coordinates": [
+          -106.145946,
+          39.50222
+        ],
+        "type": "Point"
+      },
+      "id": "59670ea0c0147177c0dc63d5f975842c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "At Vail Golf Course"
+      },
+      "geometry": {
+        "coordinates": [
+          -106.347641,
+          39.642828
+        ],
+        "type": "Point"
+      },
+      "id": "7051008f7a1faba7a33ee4dae188f442"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "At Dowds Junction"
+      },
+      "geometry": {
+        "coordinates": [
+          -106.449527,
+          39.608921
+        ],
+        "type": "Point"
+      },
+      "id": "8a43851ca81bbfaf8440b92f946ed15f"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "At Minturn"
+      },
+      "geometry": {
+        "coordinates": [
+          -106.42831,
+          39.585957
+        ],
+        "type": "Point"
+      },
+      "id": "9551c950a3eb139655f359f6be82f052"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Below Red Cliff"
+      },
+      "geometry": {
+        "coordinates": [
+          -106.377676,
+          39.508211
+        ],
+        "type": "Point"
+      },
+      "id": "ce179fd33a5cabbc3755874b4157c1c7"
+    }
+  ],
+  "type": "FeatureCollection"
+}
