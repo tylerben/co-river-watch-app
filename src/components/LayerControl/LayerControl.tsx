@@ -12,14 +12,32 @@ import {
   ListItemText,
   Checkbox,
   Divider,
+  Theme,
 } from "@material-ui/core";
 import ZoomIcon from "@material-ui/icons/ZoomIn";
 import LayersIcon from "@material-ui/icons/Layers";
 import LineIcon from "../../images/line_icon.png";
 import PolygonIcon from "../../images/polygon_icon.png";
 import PointIcon from "../../images/point_icon.png";
+import { GeometryType, iLayer } from "pages/Map/MapProvider";
 
-const basemapItemsStyles = (image, theme) => ({
+export type LayerItemProps = {
+  active: boolean;
+  name: string;
+  geometryType: GeometryType;
+  onLayerChange: (name: string) => void;
+  onZoomToLayerChange: (name: string) => void;
+};
+
+export type LayerControlProps = {
+  layers: iLayer[] | undefined;
+  open: boolean | undefined;
+  onClose: () => void;
+  onLayerChange: (name: string) => void;
+  onZoomToLayerChange: (name: string) => void;
+};
+
+const basemapItemsStyles = (image: string, theme: Theme) => ({
   width: "100%",
   height: 100,
   backgroundSize: "cover",
@@ -51,8 +69,8 @@ const useStyles = makeStyles((theme) => ({
     // display: "flex",
     // flexDirection: "column",
   },
-  mapImg: (props) => basemapItemsStyles(props.image, theme),
-  activeMapImg: (props) => {
+  mapImg: (props: { image: string }) => basemapItemsStyles(props.image, theme),
+  activeMapImg: (props: { image: string }) => {
     return {
       ...basemapItemsStyles(props.image, theme),
       border: `3px solid ${theme.palette.secondary.main}`,
@@ -69,21 +87,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const setIcon = (type) => {
+const setIcon = (type: GeometryType) => {
   const geometryFormatted = type.toLowerCase();
   if (geometryFormatted === "line") return LineIcon;
   if (geometryFormatted === "fill") return PolygonIcon;
   if (geometryFormatted === "circle") return PointIcon;
 };
 
-const LayerItem = ({
+const LayerItem: React.FC<LayerItemProps> = ({
   active,
   name,
   geometryType,
   onLayerChange,
   onZoomToLayerChange,
 }) => {
-  const classes = useStyles();
+  const classes = useStyles({ image: "" });
 
   return (
     <ListItem button>
@@ -94,11 +112,11 @@ const LayerItem = ({
           className={classes.img}
         />
       </Box>
-      <ListItemText primary={name} className={classes.listItemText} />
-      <ListItemSecondaryAction className={classes.secondaryAction}>
+      <ListItemText primary={name} />
+      <ListItemSecondaryAction>
         {active && (
           <IconButton onClick={() => onZoomToLayerChange(name)}>
-            <ZoomIcon className={classes.zoomIcon} />
+            <ZoomIcon />
           </IconButton>
         )}
         <Checkbox
@@ -115,7 +133,7 @@ const LayerItem = ({
   );
 };
 
-const LayerControl = ({
+const LayerControl: React.FC<LayerControlProps> = ({
   layers = [],
   open = false,
   onClose,
@@ -161,12 +179,12 @@ const LayerControl = ({
           </Box>
           <Divider />
           <List dense>
-            {layers.length === 0 && (
+            {layers?.length === 0 && (
               <Typography variant="body1" align="center">
                 No layers selected
               </Typography>
             )}
-            {layers.map((layer) => (
+            {layers?.map((layer) => (
               <LayerItem
                 active={layer.visible}
                 name={layer.name}

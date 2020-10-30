@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MapDrawer = (props) => {
+const MapDrawer: React.FC = () => {
   const classes = useStyles();
   const {
     filterActive,
@@ -83,15 +83,15 @@ const MapDrawer = (props) => {
     onSelectNoneLayers,
   } = useContext(MapContext);
 
-  const [activeTab, setActiveTab] = useState(
-    parseInt(sessionStorage.getItem("sk_active_drawer_tab")) || 0
+  const [activeTab, setActiveTab] = useState<number>(
+    parseInt(sessionStorage.getItem("sk_active_drawer_tab") as string) || 0
   );
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSearchValueChange(e.target.value);
   };
 
-  const handleLayerToggle = (name) => {
+  const handleLayerToggle = (name: string) => {
     onVisibleLayerChange((prevState) => {
       return [...prevState].map((d, i) => {
         let rec = { ...d };
@@ -129,19 +129,19 @@ const MapDrawer = (props) => {
       variant="permanent"
       anchor="left"
       className={clsx(classes.drawer, {
-        [classes.drawerOpen]: controls.drawer.visible,
-        [classes.drawerClose]: !controls.drawer.visible,
+        [classes.drawerOpen]: controls?.drawer?.visible,
+        [classes.drawerClose]: !controls?.drawer?.visible,
       })}
       classes={{
-        paper: clsx(classes.drawerPaper, {
-          [classes.drawerOpen]: controls.drawer.visible,
-          [classes.drawerClose]: !controls.drawer.visible,
+        paper: clsx({
+          [classes.drawerOpen]: controls?.drawer?.visible,
+          [classes.drawerClose]: !controls?.drawer?.visible,
         }),
       }}
     >
       <div className={classes.toolbar} />
-      {controls.drawer.visible && (
-        <div className={classes.drawerContainer}>
+      {controls?.drawer?.visible && (
+        <div>
           <DrawerTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           <DrawerTabPanel activeTab={activeTab} index={0}>
             <Box p={1} bgcolor="#f5f5f6" borderBottom="1px solid #dddddd">
@@ -207,7 +207,7 @@ const MapDrawer = (props) => {
         </div>
       )}
 
-      {controls.drawer.visible ? (
+      {controls?.drawer?.visible ? (
         <>
           <Button
             color="secondary"

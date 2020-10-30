@@ -1,7 +1,17 @@
 import React from "react";
 import { Typography, Box } from "@material-ui/core";
 
-const DrawerTabPanel = ({ children, activeTab, index, ...other }) => {
+export type DrawerTabPanelProps = {
+  activeTab: number;
+  index: number;
+};
+
+const DrawerTabPanel: React.FC<DrawerTabPanelProps> = ({
+  children,
+  activeTab,
+  index,
+  ...other
+}) => {
   return (
     <Typography
       component="div"

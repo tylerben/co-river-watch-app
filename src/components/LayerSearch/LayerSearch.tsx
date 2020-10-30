@@ -4,15 +4,25 @@ import SearchIcon from "@material-ui/icons/Search";
 import ClearIcon from "@material-ui/icons/Clear";
 import { TextField, InputAdornment, IconButton } from "@material-ui/core";
 
+export type LayerSearchProps = {
+  width: number | string;
+  value: string;
+  handleSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
 const useStyles = makeStyles((theme) => ({
   textField: {
     margin: theme.spacing(1),
     backgroundColor: "#ffffff",
-    width: (props) => props.width,
+    width: (props: { width: string | number }) => props.width,
   },
 }));
 
-const LayerSearch = ({ width = 400, value = "", handleSearch }) => {
+const LayerSearch: React.FC<LayerSearchProps> = ({
+  width = 400,
+  value = "",
+  handleSearch,
+}) => {
   const classes = useStyles({ width });
   return (
     <TextField
@@ -30,7 +40,11 @@ const LayerSearch = ({ width = 400, value = "", handleSearch }) => {
               edge="end"
               onClick={() => {
                 if (value !== "") {
-                  handleSearch({ target: { value: "" } });
+                  handleSearch({
+                    target: {
+                      value: "",
+                    },
+                  } as React.ChangeEvent<HTMLInputElement>);
                 } else {
                   return;
                 }

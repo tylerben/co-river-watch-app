@@ -8,10 +8,27 @@ import {
   Button,
   Tooltip,
   Divider,
+  Theme,
 } from "@material-ui/core";
 import BasemapIcon from "@material-ui/icons/Map";
+import { iActiveBasemap, iBasemap } from "pages/Map/MapProvider";
 
-const basemapItemsStyles = (image, theme) => ({
+export type BasemapItemProps = {
+  active: boolean;
+  image: string;
+  title: string;
+  onBasemapChange: () => void;
+};
+
+export type BasemapControlProps = {
+  layers: iBasemap[] | null;
+  open: boolean | undefined;
+  onClose: () => void;
+  activeBasemap: iActiveBasemap | null | undefined;
+  onBasemapChange: (basemap: iBasemap) => void;
+};
+
+const basemapItemsStyles = (image: string, theme: Theme) => ({
   width: "100%",
   height: 100,
   backgroundSize: "cover",
@@ -43,8 +60,8 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
-  mapImg: (props) => basemapItemsStyles(props.image, theme),
-  activeMapImg: (props) => {
+  mapImg: (props: { image: string }) => basemapItemsStyles(props.image, theme),
+  activeMapImg: (props: { image: string }) => {
     return {
       ...basemapItemsStyles(props.image, theme),
       border: `3px solid ${theme.palette.secondary.main}`,
@@ -58,7 +75,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const BasemapItem = ({ active, image, title, onBasemapChange }) => {
+const BasemapItem: React.FC<BasemapItemProps> = ({
+  active,
+  image,
+  title,
+  onBasemapChange,
+}) => {
   const classes = useStyles({ image });
 
   return (
@@ -69,7 +91,7 @@ const BasemapItem = ({ active, image, title, onBasemapChange }) => {
   );
 };
 
-const BasemapControls = ({
+const BasemapControls: React.FC<BasemapControlProps> = ({
   layers = [],
   open = false,
   onClose,
@@ -115,10 +137,10 @@ const BasemapControls = ({
           <Divider />
           <Box p={2}>
             <Grid container spacing={1}>
-              {layers.map((layer) => (
+              {layers?.map((layer) => (
                 <Grid key={layer.name} item xs={12} md={6}>
                   <BasemapItem
-                    active={activeBasemap.name === layer.name}
+                    active={activeBasemap?.name === layer.name}
                     image={layer.image}
                     title={layer.name}
                     onBasemapChange={() => onBasemapChange(layer)}

@@ -3,7 +3,15 @@ import { Box, Typography, Button, Divider } from "@material-ui/core";
 import ChipsFilter from "../ChipsFilter/ChipsFilter";
 import { MapContext } from "../../pages/Map/MapProvider";
 
-const FiltersControls = ({ open = false, onClose, onLayerChange }) => {
+export type FilterControlsProps = {
+  open: boolean | undefined;
+  onClose: () => void;
+};
+
+const FiltersControls: React.FC<FilterControlsProps> = ({
+  open = false,
+  onClose,
+}) => {
   const { filterValues, onFilterValuesChange } = useContext(MapContext);
 
   const LayerCategories = [
@@ -61,7 +69,7 @@ const FiltersControls = ({ open = false, onClose, onLayerChange }) => {
               title="Layer Categories"
               name="layerCategories"
               data={LayerCategories}
-              values={filterValues.layerCategories}
+              values={filterValues?.layerCategories}
               onChange={onFilterValuesChange}
               valueField="cat_ndx"
               displayField="cat_desc"
@@ -73,7 +81,7 @@ const FiltersControls = ({ open = false, onClose, onLayerChange }) => {
               title="Geometry Types"
               name="geometryTypes"
               data={GeometryTypes}
-              values={filterValues.geometryTypes}
+              values={filterValues?.geometryTypes}
               onChange={onFilterValuesChange}
               valueField="ndx"
               displayField="desc"

@@ -1,7 +1,20 @@
 import React from "react";
-// import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Chip, Box } from "@material-ui/core";
+
+export type genericObject = {
+  [key: string]: string | number;
+};
+
+export type ChipsFilterProps = {
+  title: string;
+  name: string;
+  data: genericObject[];
+  values: string[] | number[];
+  onChange: (name: string, value: string | number) => void;
+  valueField: string;
+  displayField: string;
+};
 
 const useStyles = makeStyles((theme) => ({
   chip: {
@@ -14,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ChipsFilter = ({
+const ChipsFilter: React.FC<ChipsFilterProps> = ({
   title,
   name,
   data,
@@ -32,21 +45,23 @@ const ChipsFilter = ({
           {title}
         </Typography>
       )}
-      {data.map((d) => (
+      {data.map((d: genericObject) => (
         <Chip
           key={d[valueField]}
-          color={values.includes(d[valueField]) ? "secondary" : "default"}
+          color={
+            values.includes(d[valueField] as never) ? "secondary" : "default"
+          }
           onClick={() => onChange(name, d[valueField])}
           className={classes.chip}
           clickable={false}
           label={d[displayField]}
-          variant={values.includes(d[valueField]) ? "default" : "outlined"}
+          variant={
+            values.includes(d[valueField] as never) ? "default" : "outlined"
+          }
         />
       ))}
     </Box>
   );
 };
-
-ChipsFilter.propTypes = {};
 
 export default ChipsFilter;

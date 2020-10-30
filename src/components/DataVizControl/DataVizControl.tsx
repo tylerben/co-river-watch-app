@@ -2,7 +2,15 @@ import React from "react";
 import { IconButton, Box, Tooltip } from "@material-ui/core";
 import GraphIcon from "@material-ui/icons/Assessment";
 
-const DataVizControl = ({ open = false, onClose }) => {
+export type DataVizControlProps = {
+  open: boolean | undefined;
+  onClose: () => void;
+};
+
+const DataVizControl: React.FC<DataVizControlProps> = ({
+  open = false,
+  onClose,
+}) => {
   return (
     <div>
       <Box

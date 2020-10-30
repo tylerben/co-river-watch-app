@@ -1,5 +1,4 @@
 import React from "react";
-// import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   List,
@@ -12,9 +11,32 @@ import {
   Divider,
   Button,
 } from "@material-ui/core";
-import LineIcon from "../../images/line_icon.png";
-import PolygonIcon from "../../images/polygon_icon.png";
-import PointIcon from "../../images/point_icon.png";
+import LineIcon from "images/line_icon.png";
+import PolygonIcon from "images/polygon_icon.png";
+import PointIcon from "images/point_icon.png";
+
+export type GeometryType = "line" | "fill" | "circle";
+
+export type LayerItem = {
+  name: string;
+  geometry_type: GeometryType;
+  enabled: boolean;
+};
+
+export type LayersListItemProps = {
+  name: string;
+  geometryType: GeometryType;
+  enabled: boolean;
+  handleLayerToggle: (val: string) => void;
+};
+
+export type LayersListProps = {
+  items: LayerItem[] | null;
+  searchText: string;
+  resetFilters: () => void;
+  handleLayerToggle: (val: string) => void;
+  filterActive: boolean;
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,16 +47,15 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   listItemText: {
-    color: (props) =>
+    color: (props: { enabled?: boolean }) =>
       props.enabled ? theme.palette.text.primary : theme.palette.text.secondary,
-    fontWeight: (props) => (props.enabled ? 500 : 400),
+    fontWeight: (props: { enabled?: boolean }) => (props.enabled ? 500 : 400),
   },
   secondaryAction: {
     display: "flex",
     alignItems: "center",
   },
   zoomIcon: {
-    // marginRight: theme.spacing(1),
     color: theme.palette.text.secondary,
     "&:hover": {
       cursor: "pointer",
@@ -42,14 +63,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const setIcon = (type) => {
+const setIcon = (type: GeometryType) => {
   const geometryFormatted = type.toLowerCase();
   if (geometryFormatted === "line") return LineIcon;
   if (geometryFormatted === "fill") return PolygonIcon;
   if (geometryFormatted === "circle") return PointIcon;
 };
 
-const LayerListItem = ({ name, geometryType, enabled, handleLayerToggle }) => {
+const LayerListItem: React.FC<LayersListItemProps> = ({
+  name,
+  geometryType,
+  enabled,
+  handleLayerToggle,
+}) => {
   const classes = useStyles({ enabled });
 
   return (
@@ -80,14 +106,14 @@ const LayerListItem = ({ name, geometryType, enabled, handleLayerToggle }) => {
   );
 };
 
-const LayersList = ({
+const LayersList: React.FC<LayersListProps> = ({
   items,
   searchText,
   resetFilters,
   handleLayerToggle,
   filterActive,
 }) => {
-  const classes = useStyles();
+  const classes = useStyles({});
 
   return (
     <div className={classes.root}>
@@ -99,7 +125,7 @@ const LayersList = ({
           alignItems="center"
         >
           <Typography variant="body1" color="primary">
-            {items.length} results found
+            {items?.length} results found
           </Typography>
           <Button
             variant="contained"
@@ -113,12 +139,12 @@ const LayersList = ({
       )}
       <Divider />
       <List dense>
-        {items.length === 0 ? (
+        {items?.length === 0 ? (
           <Box m={1} textAlign="center">
             <Typography variant="body1">No layers found</Typography>
           </Box>
         ) : (
-          items.map((item, i) => (
+          items?.map((item, i) => (
             <LayerListItem
               name={item.name}
               geometryType={item.geometry_type}

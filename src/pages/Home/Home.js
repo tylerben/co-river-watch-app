@@ -7,7 +7,6 @@ import {
   Grid,
   Container,
 } from "@material-ui/core";
-
 import logo from "../../images/starterkit_logo_black.png";
 import Layout from "../../components/Layout";
 

@@ -4,6 +4,11 @@ import { Tabs, Tab } from "@material-ui/core";
 import LayersIcon from "@material-ui/icons/Layers";
 import ViewIcon from "@material-ui/icons/Category";
 
+export type DrawerTabProps = {
+  activeTab: number;
+  setActiveTab: (tabIndex: number) => void;
+};
+
 const useStyles = makeStyles((theme) => ({
   tabs: {
     marginTop: theme.spacing(1),
@@ -15,14 +20,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function a11yProps(index) {
+function a11yProps(index: number) {
   return {
     id: `sidebar-tab-${index}`,
     "aria-controls": `sidebar-tabs-panel-${index}`,
   };
 }
 
-const DrawerTabs = ({ activeTab, setActiveTab }) => {
+const DrawerTabs: React.FC<DrawerTabProps> = ({ activeTab, setActiveTab }) => {
   const classes = useStyles();
 
   /**
@@ -31,7 +36,7 @@ const DrawerTabs = ({ activeTab, setActiveTab }) => {
    * @param {*} label
    * @param {*} Icon
    */
-  const setTabLabel = (label, Icon) => {
+  const setTabLabel = (label: string, Icon: any) => {
     return (
       <div className={classes.tab}>
         <Icon style={{ marginRight: 8 }} />
@@ -48,9 +53,12 @@ const DrawerTabs = ({ activeTab, setActiveTab }) => {
    * @param {*} event
    * @param {*} newValue
    */
-  const handleChange = (event, newValue) => {
-    sessionStorage.setItem("er_active_report_tab", parseInt(newValue));
-    setActiveTab(newValue);
+  const handleChange = (
+    event: React.ChangeEvent<{}>,
+    value: number | string
+  ) => {
+    sessionStorage.setItem("er_active_report_tab", value as string);
+    setActiveTab(value as number);
   };
 
   return (

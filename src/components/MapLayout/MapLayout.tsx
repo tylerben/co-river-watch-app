@@ -1,15 +1,12 @@
 import React from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { useMediaQuery } from "@material-ui/core";
-import Sidebar from "../Sidebar";
-import TopNav from "../TopNav";
+import Sidebar from "components/Sidebar";
+import TopNav from "components/TopNav";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     overflowX: `hidden`,
-    // [theme.breakpoints.up("md")]: {
-    //   display: `flex`,
-    // },
   },
   content: {
     flexGrow: 1,
@@ -17,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MapLayout = ({ children }) => {
+const MapLayout: React.FC = ({ children }) => {
   const classes = useStyles();
   const theme = useTheme();
   const desktop = useMediaQuery(theme.breakpoints.up("md"));

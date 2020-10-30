@@ -3,16 +3,16 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useAuth0 } from "../../hooks/useAuth0";
 import useFetchData from "../../hooks/useFetchData";
 import axios from "axios";
-import mapboxgl from "mapbox-gl/dist/mapbox-gl.js";
+import mapboxgl, { GeoJSONSource } from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import BasemapControls from "../BasemapControl/BasemapControl";
+import BasemapControl from "../BasemapControl/BasemapControl";
 import LayerControl from "../LayerControl/LayerControl";
 import { MapContext } from "../../pages/Map/MapProvider";
 import FiltersControls from "../FiltersControl/FiltersControl";
 import DataVizControl from "../DataVizControl/DataVizControl";
 const turf = require("@turf/turf");
 
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
+mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN as string;
 
 // create page styles
 const useStyles = makeStyles((theme) => ({
@@ -53,8 +53,8 @@ const Map = () => {
    */
   useEffect(() => {
     const map = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: activeBasemap.styleURL,
+      container: mapContainer.current!,
+      style: activeBasemap?.styleURL,
       center: [-106.449298, 39.548947],
       zoom: 9.75,
       scrollZoom: false,
@@ -68,20 +68,20 @@ const Map = () => {
       setMapIsLoaded(true);
     });
 
-    map.on('draw.create', updateDrawings);
-    map.on('draw.delete', updateDrawings);
-    map.on('draw.update', updateDrawings);
+    map.on("draw.create", updateDrawings);
+    map.on("draw.delete", updateDrawings);
+    map.on("draw.update", updateDrawings);
 
-    function updateDrawings(e) {
+    function updateDrawings(e: React.MouseEvent) {
       let data = draw.getAll();
       async function saveDrawings() {
         try {
           const token = await getTokenSilently();
           const headers = { Authorization: `Bearer ${token}` };
           await axios.put(
-              `${process.env.REACT_APP_ENDPOINT}/api/user-geometry`,
-              { features: data.features },
-              { headers }
+            `${process.env.REACT_APP_ENDPOINT}/api/user-geometry`,
+            { features: data.features },
+            { headers }
           );
         } catch (err) {
           // Is this error because we cancelled it ourselves?
@@ -99,21 +99,20 @@ const Map = () => {
   }, []); //eslint-disable-line
 
   /**
+   * TODO define actual geometry data type
    * Load map geometry from database
    */
-  const [ geometryData ] = useFetchData(
-      'user-geometry'
-  );
+  const { data: geometryData } = useFetchData<any[]>("user-geometry", []);
 
   useEffect(() => {
     if (geometryData.length > 0 && mapIsLoaded) {
       let feature = {
-        "type": "FeatureCollection",
-        "features": geometryData.map(feature => ({
-          "type": "Feature",
-          "properties": {},
-          "geometry": feature.geometry
-        }))
+        type: "FeatureCollection",
+        features: geometryData.map((feature) => ({
+          type: "Feature",
+          properties: {},
+          geometry: feature.geometry,
+        })),
       };
       draw.add(feature);
     }
@@ -125,9 +124,9 @@ const Map = () => {
    */
   useEffect(() => {
     if (typeof map !== "undefined" && map !== null && map.isStyleLoaded()) {
-      map.setStyle(activeBasemap.styleURL);
+      map.setStyle(activeBasemap?.styleURL!);
       map.on("style.load", function() {
-        visibleLayers.map((layer) => {
+        visibleLayers?.map((layer) => {
           if (
             !map.getSource(`${layer.name}-source`) &&
             layer.spatialData !== null &&
@@ -152,13 +151,15 @@ const Map = () => {
           return layer;
         });
 
-        visibleLayers.map((layer) => {
+        visibleLayers?.map((layer) => {
           if (
             map.getSource(`${layer.name}-source`) &&
             layer.spatialData !== null &&
             layer.paint !== null
           ) {
-            map.getSource(`${layer.name}-source`).setData(layer.spatial_data);
+            (map.getSource(`${layer.name}-source`) as GeoJSONSource).setData(
+              layer.spatial_data
+            );
             map.setLayoutProperty(
               layer.name,
               "visibility",
@@ -177,12 +178,12 @@ const Map = () => {
         map.resize();
       }, 500);
     }
-  }, [controls.drawer.visible, map]);
+  }, [controls?.drawer?.visible, map]);
 
   useEffect(() => {
     if (typeof map !== "undefined" && map !== null) {
       map.on("load", () => {
-        visibleLayers.map((layer) => {
+        visibleLayers?.map((layer) => {
           if (
             !map.getSource(`${layer.name}-source`) &&
             layer.spatialData !== null &&
@@ -209,13 +210,15 @@ const Map = () => {
         });
         // map.setStyle(activeBasemap.styleURL);
       });
-      visibleLayers.map((layer) => {
+      visibleLayers?.map((layer) => {
         if (
           map.getSource(`${layer.name}-source`) &&
           layer.spatialData !== null &&
           layer.paint !== null
         ) {
-          map.getSource(`${layer.name}-source`).setData(layer.spatial_data);
+          (map.getSource(`${layer.name}-source`) as GeoJSONSource).setData(
+            layer.spatial_data
+          );
           map.setLayoutProperty(
             layer.name,
             "visibility",
@@ -229,8 +232,8 @@ const Map = () => {
 
   useEffect(() => {
     if (typeof map !== "undefined" && map !== null && map.isStyleLoaded()) {
-      const layer = filteredLayers.find((d) => d.name === activeZoomToLayer);
-      const bbox = turf.bbox(layer.spatial_data);
+      const layer = filteredLayers?.find((d) => d.name === activeZoomToLayer);
+      const bbox = turf.bbox(layer?.spatial_data);
 
       map.fitBounds(bbox, {
         padding: 100,
@@ -238,7 +241,7 @@ const Map = () => {
     }
   }, [activeZoomToLayer, map]); //eslint-disable-line
 
-  const handleLayerToggle = (name) => {
+  const handleLayerToggle = (name: string) => {
     onVisibleLayerChange((prevState) => {
       return [...prevState].map((d, i) => {
         let rec = { ...d };
@@ -274,26 +277,26 @@ const Map = () => {
     <>
       <div className={classes.toolbar}></div>
       <div ref={mapContainer} className={classes.map}>
-        <BasemapControls
+        <BasemapControl
           layers={basemapLayers}
-          open={controls.basemap.visible}
+          open={controls?.basemap.visible}
           onClose={() => handleControlsVisibility("basemap")}
           activeBasemap={activeBasemap}
           onBasemapChange={onBasemapChange}
         />
         <LayerControl
-          layers={visibleLayers.filter((d) => d.enabled)}
-          open={controls.layers.visible}
+          layers={visibleLayers?.filter((d) => d.enabled)}
+          open={controls?.layers.visible}
           onLayerChange={handleLayerToggle}
           onZoomToLayerChange={onZoomToLayerChange}
           onClose={() => handleControlsVisibility("layers")}
         />
         <FiltersControls
-          open={controls.filterLayers.visible}
+          open={controls?.filterLayers.visible}
           onClose={() => handleControlsVisibility("filterLayers")}
         />
         <DataVizControl
-          open={controls.dataViz.visible}
+          open={controls?.dataViz.visible}
           onClose={() => handleControlsVisibility("dataViz")}
         />
       </div>

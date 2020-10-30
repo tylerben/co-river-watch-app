@@ -1,29 +1,31 @@
 import React, { useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { Box, Typography, Paper } from "@material-ui/core";
-
 import MapLayout from "../../components/MapLayout";
 import MapDrawer from "../../components/MapDrawer";
 import Map from "../../components/Map";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import { MapContext } from "./MapProvider";
 
-// create page styles
-const useStyles = makeStyles((theme) => ({
-  root: {
-    overflowX: `hidden`,
-    [theme.breakpoints.up("md")]: {
-      display: `flex`,
+const styles = ({ breakpoints, mixins }: Theme) =>
+  createStyles({
+    root: {
+      overflowX: `hidden`,
+      [breakpoints.up("md")]: {
+        display: `flex`,
+      },
     },
-  },
-  content: {
-    flexGrow: 1,
-    overflow: "hidden",
-    marginTop: theme.mixins.toolbar,
-  },
-}));
+    content: {
+      flexGrow: 1,
+      overflow: "hidden",
+      marginTop: mixins.toolbar as any,
+    },
+  });
 
-const MapPage = (props) => {
+// create page styles
+const useStyles = makeStyles(styles);
+
+const MapPage: React.FC = () => {
   const classes = useStyles();
   const { controls } = useContext(MapContext);
 
@@ -36,7 +38,7 @@ const MapPage = (props) => {
             <Map />
           </Box>
 
-          {controls.dataViz.visible && (
+          {controls?.dataViz?.visible && (
             <Box
               ml="auto"
               mr="auto"

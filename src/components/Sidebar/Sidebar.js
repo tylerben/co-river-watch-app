@@ -8,16 +8,10 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import HomeIcon from "@material-ui/icons/Home";
-import MapIcon from "@material-ui/icons/LocationOn";
-import LogoutIcon from "@material-ui/icons/ExitToApp";
-import SecurityIcon from "@material-ui/icons/Security";
-import DataManagementIcon from "@material-ui/icons/Storage";
-import AccountIcon from "@material-ui/icons/AccountCircle";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-
+import { MenuItems } from "../../utils/constants";
 import logo from "../../images/starterkit_logo_white.png";
 import { useAuth0 } from "../../hooks/useAuth0";
 
@@ -80,7 +74,7 @@ const Sidebar = (props) => {
   const classes = useStyles();
   let history = useHistory();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -103,26 +97,6 @@ const Sidebar = (props) => {
       return history.location.pathname.includes(item.activePath);
     }
   };
-
-  // Configure sidebar menu items
-  const MenuItems = [
-    {
-      link: "",
-      title: "Home",
-      activePath: "",
-      exact: true,
-      icon: HomeIcon,
-      loginRequired: false,
-    },
-    {
-      link: "map",
-      title: "Map",
-      activePath: "map",
-      exact: true,
-      icon: MapIcon,
-      loginRequired: false,
-    },
-  ];
 
   const returnMenuItem = (item, isAuthenticated, user) => {
     const li = (
@@ -166,29 +140,6 @@ const Sidebar = (props) => {
       </div>
       <List className={classes.nav}>
         {MenuItems.map((item) => returnMenuItem(item, isAuthenticated, user))}
-        {/* {isAuthenticated ? (
-          <ListItem button>
-            <ListItemIcon className={classes.navIcon}>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText
-              className={classes.navText}
-              primary="Logout"
-              onClick={() => logout()}
-            />
-          </ListItem>
-        ) : (
-          <ListItem button>
-            <ListItemIcon className={classes.navIcon}>
-              <AccountIcon />
-            </ListItemIcon>
-            <ListItemText
-              className={classes.navText}
-              primary="Login"
-              onClick={() => loginWithRedirect()}
-            />
-          </ListItem>
-        )} */}
       </List>
     </div>
   );
