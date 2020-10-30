@@ -1,4 +1,10 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { matchSorter } from "match-sorter";
 import useFetchData from "hooks/useFetchData";
 import { DummyBasemapLayers } from "utils/constants";
@@ -31,6 +37,7 @@ export type iMapProviderValue = {
   layers: iLayer[] | null;
   filteredLayers: iLayer[] | null;
   visibleLayers: iLayer[] | null;
+  layersLoaded: boolean;
   filterValues: iFilterValues;
   searchValue: string;
   filterActive: boolean;
@@ -92,6 +99,7 @@ export const MapContext = React.createContext<iMapProviderValue>({
   layers: null,
   filteredLayers: null,
   visibleLayers: null,
+  layersLoaded: false,
   filterValues: {
     layerCategories: [],
     geometryTypes: [],
@@ -139,16 +147,26 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
     styleURL: "mapbox://styles/mapbox/streets-v11",
   });
   const [basemapLayers] = useState<iBasemap[]>(DummyBasemapLayers);
-  const { data: layers, setData: setLayers } = useFetchData<iLayer[]>(
-    "stations",
-    []
-  );
-  const { data: filteredLayers, setData: setFilteredLayers } = useFetchData<
-    iLayer[]
-  >("stations", []);
-  const { data: visibleLayers, setData: setVisibleLayers } = useFetchData<
-    iLayer[]
-  >("stations", []);
+  const {
+    data: layers,
+    setData: setLayers,
+    isLoading: isLayersLoading,
+  } = useFetchData<iLayer[]>("stations", []);
+  const {
+    data: filteredLayers,
+    setData: setFilteredLayers,
+    isLoading: isFilteredLayersLoading,
+  } = useFetchData<iLayer[]>("stations", []);
+  const {
+    data: visibleLayers,
+    setData: setVisibleLayers,
+    isLoading: isVisibleLayersLoading,
+  } = useFetchData<iLayer[]>("stations", []);
+  const layersLoaded = useMemo(() => {
+    return (
+      !isLayersLoading && !isFilteredLayersLoading && !isVisibleLayersLoading
+    );
+  }, [isLayersLoading, isFilteredLayersLoading, isVisibleLayersLoading]);
   const [filterValues, setFilterValues] = useState<iFilterValues>({
     layerCategories: [],
     geometryTypes: [],
@@ -380,6 +398,7 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
         layers,
         filteredLayers,
         visibleLayers,
+        layersLoaded,
         filterValues,
         searchValue,
         filterActive,

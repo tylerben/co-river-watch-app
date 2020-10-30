@@ -37,6 +37,7 @@ const Map = () => {
     onBasemapChange,
     filteredLayers,
     visibleLayers,
+    layersLoaded,
     onVisibleLayerChange,
     onFilteredLayerChange,
     onLayerChange,
@@ -122,7 +123,12 @@ const Map = () => {
    * changes
    */
   useEffect(() => {
-    if (typeof map !== "undefined" && map !== null && map.isStyleLoaded()) {
+    if (
+      layersLoaded &&
+      typeof map !== "undefined" &&
+      map !== null &&
+      map.isStyleLoaded()
+    ) {
       map.setStyle(activeBasemap?.styleURL!);
       map.on("style.load", function() {
         visibleLayers?.map((layer) => {
@@ -169,7 +175,7 @@ const Map = () => {
         });
       });
     }
-  }, [activeBasemap, map]); //eslint-disable-line
+  }, [activeBasemap, map, layersLoaded]); //eslint-disable-line
 
   useEffect(() => {
     if (typeof map !== "undefined" && map !== null) {
