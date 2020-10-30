@@ -31,7 +31,7 @@ export type iMapProviderValue = {
   layers: iLayer[] | null;
   filteredLayers: iLayer[] | null;
   visibleLayers: iLayer[] | null;
-  filterValues: iFilterValues | null;
+  filterValues: iFilterValues;
   searchValue: string;
   filterActive: boolean;
   onMapChange: (map: MapboxMap) => void;
@@ -92,7 +92,10 @@ export const MapContext = React.createContext<iMapProviderValue>({
   layers: null,
   filteredLayers: null,
   visibleLayers: null,
-  filterValues: null,
+  filterValues: {
+    layerCategories: [],
+    geometryTypes: [],
+  },
   searchValue: "",
   filterActive: false,
   onMapChange: (map) => {},
@@ -137,15 +140,15 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
   });
   const [basemapLayers] = useState<iBasemap[]>(DummyBasemapLayers);
   const { data: layers, setData: setLayers } = useFetchData<iLayer[]>(
-    "map-example/layers",
+    "stations",
     []
   );
   const { data: filteredLayers, setData: setFilteredLayers } = useFetchData<
     iLayer[]
-  >("map-example/layers", []);
+  >("stations", []);
   const { data: visibleLayers, setData: setVisibleLayers } = useFetchData<
     iLayer[]
-  >("map-example/layers", []);
+  >("stations", []);
   const [filterValues, setFilterValues] = useState<iFilterValues>({
     layerCategories: [],
     geometryTypes: [],

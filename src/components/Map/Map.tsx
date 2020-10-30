@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useAuth0 } from "../../hooks/useAuth0";
-import useFetchData from "../../hooks/useFetchData";
 import axios from "axios";
 import mapboxgl, { GeoJSONSource } from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
@@ -55,8 +54,8 @@ const Map = () => {
     const map = new mapboxgl.Map({
       container: mapContainer.current!,
       style: activeBasemap?.styleURL,
-      center: [-106.449298, 39.548947],
-      zoom: 9.75,
+      center: [-105.849298, 38.948947],
+      zoom: 6.57,
       scrollZoom: false,
     });
 
@@ -102,21 +101,21 @@ const Map = () => {
    * TODO define actual geometry data type
    * Load map geometry from database
    */
-  const { data: geometryData } = useFetchData<any[]>("user-geometry", []);
+  // const { data: geometryData } = useFetchData<any[]>("user-geometry", []);
 
-  useEffect(() => {
-    if (geometryData.length > 0 && mapIsLoaded) {
-      let feature = {
-        type: "FeatureCollection",
-        features: geometryData.map((feature) => ({
-          type: "Feature",
-          properties: {},
-          geometry: feature.geometry,
-        })),
-      };
-      draw.add(feature);
-    }
-  }, [draw, geometryData, mapIsLoaded]);
+  // useEffect(() => {
+  //   if (geometryData.length > 0 && mapIsLoaded) {
+  //     let feature = {
+  //       type: "FeatureCollection",
+  //       features: geometryData.map((feature) => ({
+  //         type: "Feature",
+  //         properties: {},
+  //         geometry: feature.geometry,
+  //       })),
+  //     };
+  //     draw.add(feature);
+  //   }
+  // }, [draw, geometryData, mapIsLoaded]);
 
   /**
    * Update the map style whenever the activeBasemap
@@ -178,7 +177,7 @@ const Map = () => {
         map.resize();
       }, 500);
     }
-  }, [controls?.drawer?.visible, map]);
+  }, [controls?.drawer?.visible, map]); //eslint-disable-line
 
   useEffect(() => {
     if (typeof map !== "undefined" && map !== null) {

@@ -5,7 +5,6 @@ import OutdoorsImg from "images/outdoors.png";
 import SatelliteImg from "images/satellite.jpg";
 import LightImg from "images/light.png";
 import DarkImg from "images/dark.png";
-import RasterImg from "images/raster.png";
 
 export const MenuItems = [
   {
@@ -51,10 +50,5 @@ export const DummyBasemapLayers = [
     name: "Dark",
     styleURL: "mapbox://styles/mapbox/dark-v10",
     image: DarkImg,
-  },
-  {
-    name: "Raster",
-    styleURL: "mapbox://styles/lrewater/ckfmqvtng6cad19r1wgf9acz8",
-    image: RasterImg,
   },
 ];

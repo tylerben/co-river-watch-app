@@ -11,7 +11,7 @@ export type ChipsFilterProps = {
   name: string;
   data: genericObject[];
   values: string[] | number[];
-  onChange: (name: string, value: string | number) => void;
+  onChange: (name: string, value: any) => void;
   valueField: string;
   displayField: string;
 };
