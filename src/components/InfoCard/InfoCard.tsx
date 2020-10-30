@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "@material-ui/core";
 
-const InfoCard = ({ children, ...other }) => {
+const InfoCard: React.FC = ({ children, ...other }) => {
   return (
     <Box
       p={2}

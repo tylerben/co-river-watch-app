@@ -1,5 +1,5 @@
 import React from "react";
-import { default as NotFound } from "./NotFound";
+import { default as NotFound } from "./NotFound.js";
 import { CssBaseline } from "@material-ui/core";
 import { BrowserRouter } from "react-router-dom";
 

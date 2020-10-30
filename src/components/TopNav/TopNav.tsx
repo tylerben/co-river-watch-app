@@ -9,6 +9,15 @@ import Link from "@material-ui/core/Link";
 import { checkActive } from "../../utils";
 import { useAuth0 } from "../../hooks/useAuth0";
 
+export type iMenuItem = {
+  link: string;
+  title: string;
+  activePath: string;
+  exact?: boolean;
+  loginRequired: boolean;
+  rolesRequired?: string[];
+};
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -48,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TopNav = (props) => {
+const TopNav: React.FC = () => {
   const classes = useStyles();
   let history = useHistory();
   const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
@@ -58,7 +67,7 @@ const TopNav = (props) => {
    * on if menu item is active or not
    * @param {*} url
    */
-  const handleActive = (url, exact) => {
+  const handleActive = (url: string, exact?: boolean) => {
     const active = checkActive(history, url, exact);
     if (active) {
       return classes.activeLink;
@@ -67,7 +76,7 @@ const TopNav = (props) => {
   };
 
   // Configure sidebar menu items
-  const MenuItems = [
+  const MenuItems: iMenuItem[] = [
     {
       link: "",
       title: "Home",
@@ -90,7 +99,11 @@ const TopNav = (props) => {
     },
   ];
 
-  const returnMenuItem = (item, isAuthenticated, user) => {
+  const returnMenuItem = (
+    item: iMenuItem,
+    isAuthenticated: boolean,
+    user: { [key: string]: any }
+  ) => {
     const li = (
       <Link
         key={item.link}

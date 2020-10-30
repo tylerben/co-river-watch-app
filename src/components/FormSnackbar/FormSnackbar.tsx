@@ -3,6 +3,14 @@ import PropTypes from "prop-types";
 import { Snackbar, SnackbarContent } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
+export type FormSnackbarProps = {
+  open: boolean;
+  error: boolean;
+  errorMessage?: string;
+  successMessage?: string;
+  handleClose: () => void;
+};
+
 const useStyles = makeStyles((theme) => ({
   snackbarSuccess: {
     backgroundColor: "#4074DC",
@@ -18,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
  * the component on a form submit, copy to clipboard action or
  * any other sort of data operation.
  */
-const FormSnackbar = ({
+const FormSnackbar: React.FC<FormSnackbarProps> = ({
   open,
   error,
   errorMessage = "There was an error saving the data.",

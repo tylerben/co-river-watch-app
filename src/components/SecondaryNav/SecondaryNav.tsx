@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -13,6 +12,20 @@ import {
 } from "@material-ui/core";
 import DropdownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { Flex } from "../Flex";
+
+export type MenuItem = {
+  id: string | number;
+  title: string;
+  path: string;
+  activePath: string;
+  exact?: boolean;
+  children: MenuItem[];
+};
+
+export type SecondaryNavProps = {
+  title?: string;
+  menuItems: MenuItem[];
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,12 +85,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SecondaryNav = ({ title, menuItems, ...other }) => {
+const SecondaryNav: React.FC<SecondaryNavProps> = ({
+  title,
+  menuItems,
+  ...other
+}) => {
   const classes = useStyles();
   let history = useHistory();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const handleClick = (event) => {
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -90,7 +107,7 @@ const SecondaryNav = ({ title, menuItems, ...other }) => {
    * if a menu item is active or not
    * @param {*} url
    */
-  const checkActive = (history, url, exact) => {
+  const checkActive = (history: any, url: string, exact?: boolean) => {
     if (exact) {
       if (history.location.pathname === url) {
         return true;
@@ -109,7 +126,7 @@ const SecondaryNav = ({ title, menuItems, ...other }) => {
    * on if menu item is active or not
    * @param {*} url
    */
-  const handleActive = (url, exact) => {
+  const handleActive = (url: string, exact?: boolean) => {
     const active = checkActive(history, url, exact);
     if (active) {
       return classes.activeLink;
@@ -122,7 +139,7 @@ const SecondaryNav = ({ title, menuItems, ...other }) => {
    * on if menu item is active or not
    * @param {*} url
    */
-  const handleActiveChild = (url, exact) => {
+  const handleActiveChild = (url: string, exact?: boolean) => {
     const active = checkActive(history, url, exact);
     if (active) {
       return classes.activeChildLink;
@@ -199,34 +216,6 @@ const SecondaryNav = ({ title, menuItems, ...other }) => {
       <Divider />
     </AppBar>
   );
-};
-
-SecondaryNav.propTypes = {
-  /**
-   * The site title to be displayed in the navigation bar.
-   */
-  title: PropTypes.string,
-  /**
-   * An array of navigation menu items
-   */
-  menuItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      title: PropTypes.string.isRequired,
-      path: PropTypes.string.isRequired,
-      activePath: PropTypes.string.isRequired,
-      exact: PropTypes.boolean,
-      children: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-            .isRequired,
-          title: PropTypes.string.isRequired,
-          path: PropTypes.string.isRequired,
-          exact: PropTypes.boolean,
-        })
-      ),
-    })
-  ).isRequired,
 };
 
 export default SecondaryNav;

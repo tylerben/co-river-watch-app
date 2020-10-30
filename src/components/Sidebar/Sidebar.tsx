@@ -15,6 +15,16 @@ import { MenuItems } from "../../utils/constants";
 import logo from "../../images/starterkit_logo_white.png";
 import { useAuth0 } from "../../hooks/useAuth0";
 
+export type iMenuItem = {
+  link: string;
+  title: string;
+  activePath: string;
+  exact?: boolean;
+  icon: any;
+  loginRequired: boolean;
+  rolesRequired?: string[];
+};
+
 const drawerWidth = 270;
 
 const useStyles = makeStyles((theme) => ({
@@ -70,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Sidebar = (props) => {
+const Sidebar: React.FC = () => {
   const classes = useStyles();
   let history = useHistory();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -81,7 +91,7 @@ const Sidebar = (props) => {
   };
 
   // function for naviating to a specific page in the app
-  const goTo = (route) => {
+  const goTo = (route: string) => {
     history.push(`/${route}`);
     localStorage.setItem("last_url", history.location.pathname);
   };
@@ -90,7 +100,7 @@ const Sidebar = (props) => {
    * Utility function used to determine if a menu link is active
    * @param {*} item
    */
-  const setActive = (item) => {
+  const setActive = (item: iMenuItem) => {
     if (item.exact) {
       return history.location.pathname === `/${item.activePath}`;
     } else {
@@ -98,7 +108,11 @@ const Sidebar = (props) => {
     }
   };
 
-  const returnMenuItem = (item, isAuthenticated, user) => {
+  const returnMenuItem = (
+    item: iMenuItem,
+    isAuthenticated: boolean,
+    user: { [key: string]: any }
+  ) => {
     const li = (
       <ListItem
         button

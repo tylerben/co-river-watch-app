@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Layout = ({ children }) => {
+const Layout: React.FC = ({ children }) => {
   const classes = useStyles();
   return (
     <div className={classes.root}>

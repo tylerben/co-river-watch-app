@@ -2,13 +2,19 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Box } from "@material-ui/core";
 
+export type FlexProps = {
+  alignItems?: string;
+  justifyContent?: string;
+  flexWrap?: string;
+};
+
 /**
  * Component used to display elements in a row using flexbox.
  * The content can be justified and aligned
  * using component props. Any valid css flexbox value
  * works with this component.
  */
-const Flex = ({
+const Flex: React.FC<FlexProps> = ({
   children,
   alignItems = "center",
   justifyContent = "start",

@@ -1,9 +1,17 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Link as RouterLink } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Chip, Link } from "@material-ui/core";
 import { Flex } from "../Flex";
+
+export type ChipNavProps = {
+  title: string;
+  menuItems: {
+    id: string | number;
+    title: string;
+    path: string;
+  }[];
+};
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -15,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ChipNav = ({ title, menuItems, ...other }) => {
+const ChipNav: React.FC<ChipNavProps> = ({ title, menuItems, ...other }) => {
   const classes = useStyles();
   return (
     <Flex alignItems="center">
@@ -29,23 +37,6 @@ const ChipNav = ({ title, menuItems, ...other }) => {
       ))}
     </Flex>
   );
-};
-
-ChipNav.propTypes = {
-  /**
-   * The site title to be displayed in the chip navigation bar.
-   */
-  title: PropTypes.string.isRequired,
-  /**
-   * An array of menu items
-   */
-  menuItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      title: PropTypes.string.isRequired,
-      path: PropTypes.string.isRequired,
-    })
-  ).isRequired,
 };
 
 export default ChipNav;

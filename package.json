@@ -66,6 +66,7 @@
     "@storybook/react": "^5.3.19",
     "@types/mapbox-gl": "^1.12.5",
     "@types/match-sorter": "^5.0.0",
-    "@types/node": "^14.11.10"
+    "@types/node": "^14.11.10",
+    "@types/react-router-dom": "^5.1.6"
   }
 }

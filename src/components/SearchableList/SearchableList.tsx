@@ -21,6 +21,19 @@ import UpIcon from "@material-ui/icons/ArrowDropUp";
 import DownIcon from "@material-ui/icons/ArrowDropDown";
 import { Flex } from "../Flex";
 
+export type ListData = {
+  [key: string]: any;
+};
+
+export type SearchableListProps = {
+  data?: ListData[];
+  valueField: string;
+  displayField: string;
+  title?: string;
+  active: ListData | undefined;
+  onClick?: (record: ListData) => void;
+};
+
 const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: theme.palette.secondary.main,
@@ -40,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SearchableList = ({
+const SearchableList: React.FC<SearchableListProps> = ({
   data = [],
   valueField,
   displayField,
@@ -63,7 +76,7 @@ const SearchableList = ({
     );
   }
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setSearchText(value);
   };
@@ -97,12 +110,12 @@ const SearchableList = ({
         </FormControl>
         <Flex justifyContent="start">
           <IconButton onClick={handleSortDirection}>
-            <SortIcon color="primary" size="large" />
+            <SortIcon color="primary" fontSize="large" />
           </IconButton>
           {sortDirection === "asc" ? (
-            <UpIcon size="small" color="disabled" />
+            <UpIcon fontSize="small" color="disabled" />
           ) : (
-            <DownIcon size="small" color="disabled" />
+            <DownIcon fontSize="small" color="disabled" />
           )}
         </Flex>
       </Flex>
