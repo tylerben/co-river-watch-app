@@ -147,13 +147,15 @@ const Map = () => {
               ([k, v]) => v.length > 0
             );
             if (filtersApplied) {
-              const filters: any = ["any"];
+              const filters: any = ["all"];
               Object.keys(currLayer.fields).forEach((key: string) => {
-                const filterValues = generateIncludesFilter(
-                  currLayer.fields[key],
-                  key
-                );
-                filters.push(filterValues);
+                if (currLayer.fields[key].length > 0) {
+                  const filterValues = generateIncludesFilter(
+                    currLayer.fields[key],
+                    key
+                  );
+                  filters.push(filterValues);
+                }
               });
               map.setFilter(layer.name, filters);
             } else {

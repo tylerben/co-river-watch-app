@@ -28,6 +28,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "react-syntax-highlighter": "^11.0.2",
+    "react-window": "^1.8.6",
     "serverless-http": "^2.6.0",
     "typescript": "3.9.7"
   },

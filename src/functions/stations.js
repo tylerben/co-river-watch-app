@@ -59,7 +59,7 @@ const generateGeoJSON = (features = []) => {
 
 const uniqueBy = (data, iterator) => {
   if (!data.length > 0) return [];
-  return [...new Set(data.map((d) => d[iterator]))];
+  return [...new Set(data.map((d) => d[iterator]))].sort();
 };
 
 const getType = (features) => {
@@ -174,18 +174,18 @@ router.get("/", async (req, res) => {
           },
           schema: generateSchema(stationData, [
             {
-              name: "StationName",
-              label: "Station Name",
-              filter: {
-                type: "search",
-                multiple: true,
-              },
-            },
-            {
               name: "RWWaterShed",
               label: "Major River Basin",
               filter: {
                 type: "chip",
+                multiple: true,
+              },
+            },
+            {
+              name: "StationName",
+              label: "Station Name",
+              filter: {
+                type: "search",
                 multiple: true,
               },
             },
@@ -200,7 +200,7 @@ router.get("/", async (req, res) => {
             {
               name: "WaterBodyId",
               label: "Water Body ID (WBID)",
-              filterType: {
+              filter: {
                 type: "search",
                 multiple: true,
               },
@@ -208,7 +208,7 @@ router.get("/", async (req, res) => {
             {
               name: "StationStatus",
               label: "Station Status",
-              filterType: {
+              filter: {
                 type: "chip",
                 multiple: true,
               },

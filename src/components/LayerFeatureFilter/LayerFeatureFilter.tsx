@@ -7,6 +7,7 @@ import {
   iLayerSchema,
   MapContext,
 } from "../../pages/Map/MapProvider";
+import Autocomplete from "components/Autocomplete/Autocomplete";
 
 export type FilterControlsProps = {
   layer: iLayer;
@@ -91,8 +92,37 @@ const LayerFeatureFilter: React.FC<FilterControlsProps> = ({
                         });
                       }}
                     />
-                    {i === layer.schema.length - 1 && (
+                    {i !== layer.schema.length - 1 && (
                       <Box mt={1}>
+                        <Divider />
+                      </Box>
+                    )}
+                  </Box>
+                );
+              } else if (d.filter.type === "search") {
+                return (
+                  <Box mt={1} key={d.name}>
+                    <Typography variant="body1" paragraph>
+                      {d.label}
+                    </Typography>
+                    <Autocomplete
+                      multiple={d.filter.multiple}
+                      data={d.filter.values}
+                      name={d.name}
+                      label={d.label}
+                      value={getFilterValues(filteredFeatures!, layer, d)}
+                      onChange={(event, value) => {
+                        const { name } = event.target;
+                        onFilteredFeaturesChange((prevState) => {
+                          const newValues = { ...prevState };
+                          newValues[layer.name].fields[name] = value;
+                          return newValues;
+                        });
+                      }}
+                      limitTags={2}
+                    />
+                    {i !== layer.schema.length - 1 && (
+                      <Box mt={2}>
                         <Divider />
                       </Box>
                     )}
