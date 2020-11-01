@@ -21,6 +21,7 @@
     "match-sorter": "^5.0.0",
     "material-table": "^1.57.2",
     "papaparse": "^5.2.0",
+    "qs": "^6.9.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-markdown": "^4.2.1",

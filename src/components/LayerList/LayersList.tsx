@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   List,
@@ -10,10 +10,13 @@ import {
   Typography,
   Divider,
   Button,
+  IconButton,
 } from "@material-ui/core";
+import FilterIcon from "@material-ui/icons/FilterList";
 import LineIcon from "images/line_icon.png";
 import PolygonIcon from "images/polygon_icon.png";
 import PointIcon from "images/point_icon.png";
+import { MapContext } from "pages/Map/MapProvider";
 
 export type GeometryType = "line" | "fill" | "circle";
 
@@ -21,12 +24,14 @@ export type LayerItem = {
   name: string;
   geometry_type: GeometryType;
   enabled: boolean;
+  filterable: boolean;
 };
 
 export type LayersListItemProps = {
   name: string;
   geometryType: GeometryType;
   enabled: boolean;
+  filterable: boolean;
   handleLayerToggle: (val: string) => void;
 };
 
@@ -74,9 +79,15 @@ const LayerListItem: React.FC<LayersListItemProps> = ({
   name,
   geometryType,
   enabled,
+  filterable,
   handleLayerToggle,
 }) => {
   const classes = useStyles({ enabled });
+  const {
+    layers,
+    onFilterFeaturesLayerChange,
+    handleControlsVisibility,
+  } = useContext(MapContext);
 
   return (
     <>
@@ -90,6 +101,19 @@ const LayerListItem: React.FC<LayersListItemProps> = ({
         </Box>
         <ListItemText primary={name} className={classes.listItemText} />
         <ListItemSecondaryAction className={classes.secondaryAction}>
+          {enabled && filterable && (
+            <IconButton
+              onClick={() => {
+                onFilterFeaturesLayerChange(
+                  layers?.filter((layer) => layer.name === name)[0]!
+                );
+                handleControlsVisibility("filterLayerFeatures");
+              }}
+            >
+              <FilterIcon />
+            </IconButton>
+          )}
+
           <Checkbox
             edge="start"
             checked={enabled}
@@ -149,6 +173,7 @@ const LayersList: React.FC<LayersListProps> = ({
               name={item.name}
               geometryType={item.geometry_type}
               enabled={item.enabled}
+              filterable={item.filterable}
               key={item.name}
               handleLayerToggle={handleLayerToggle}
             />

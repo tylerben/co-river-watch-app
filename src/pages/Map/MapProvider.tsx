@@ -14,28 +14,44 @@ export type Dispatcher<S> = Dispatch<SetStateAction<S>>;
 
 export type GeometryType = "line" | "circle" | "fill";
 
+export type iLayerSchema = {
+  name: string;
+  label: string;
+  filter: {
+    type: "search" | "chip";
+    multiple: boolean;
+    values: string[] | number[];
+  };
+};
+
 export interface iLayer {
   name: string;
   geometry_type: GeometryType;
+  legend: boolean;
   enabled: boolean;
   visible: boolean;
+  filterable: boolean;
   layer_categories: string[];
-  spatial_data: GeoJSON.FeatureCollection<
-    GeoJSON.Geometry,
-    GeoJSON.GeoJsonProperties
-  >;
+  layer_source_type: "geojson" | "tileset";
+  layer_source_name?: string;
+  spatial_data:
+    | GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoJSON.GeoJsonProperties>
+    | string;
   paint: AnyPaint;
+  schema: iLayerSchema[];
   [key: string]: any;
 }
 
 export type iMapProviderValue = {
   map: MapboxMap | null;
   controls: iControls | null;
+  activeFilterFeaturesLayer?: iLayer | null;
   activeZoomToLayer?: string | null;
   activeBasemap?: iActiveBasemap | null;
   basemapLayers: iBasemap[] | null;
   layers: iLayer[] | null;
   filteredLayers: iLayer[] | null;
+  filteredFeatures: iFilteredFeatures | null;
   visibleLayers: iLayer[] | null;
   layersLoaded: boolean;
   filterValues: iFilterValues;
@@ -43,9 +59,11 @@ export type iMapProviderValue = {
   filterActive: boolean;
   onMapChange: (map: MapboxMap) => void;
   handleControlsVisibility: (control: string, state?: boolean) => void;
+  onFilterFeaturesLayerChange: (val: iLayer) => void;
   onZoomToLayerChange: (val: string) => void;
   onBasemapChange: Dispatcher<iActiveBasemap>;
   onLayerChange: Dispatcher<iLayer[]>;
+  onFilteredFeaturesChange: Dispatcher<iFilteredFeatures>;
   onFilteredLayerChange: Dispatcher<iLayer[]>;
   onVisibleLayerChange: Dispatcher<iLayer[]>;
   onFilterValuesChange: (name: string, val: string | string[]) => void;
@@ -65,6 +83,15 @@ export type iFilterValues = {
   geometryTypes: string[];
 };
 
+export type iFilteredFeatures = {
+  [key: string]: {
+    layer_name: string;
+    fields: {
+      [key: string]: any;
+    };
+  };
+};
+
 export type iBasemap = {
   name: string;
   styleURL: string;
@@ -79,6 +106,7 @@ export type iActiveBasemap = {
 export type iControls = {
   [key: string]: {
     visible: boolean;
+    persistState: boolean;
   };
 };
 
@@ -93,11 +121,13 @@ export type iControls = {
 export const MapContext = React.createContext<iMapProviderValue>({
   map: null,
   controls: null,
+  activeFilterFeaturesLayer: null,
   activeZoomToLayer: null,
   activeBasemap: null,
   basemapLayers: null,
   layers: null,
   filteredLayers: null,
+  filteredFeatures: null,
   visibleLayers: null,
   layersLoaded: false,
   filterValues: {
@@ -108,9 +138,11 @@ export const MapContext = React.createContext<iMapProviderValue>({
   filterActive: false,
   onMapChange: (map) => {},
   handleControlsVisibility: (control: string, state?: boolean) => {},
+  onFilterFeaturesLayerChange: (val: iLayer) => {},
   onZoomToLayerChange: (val: string) => {},
   onBasemapChange: () => {},
   onLayerChange: () => {},
+  onFilteredFeaturesChange: () => {},
   onFilteredLayerChange: () => {},
   onVisibleLayerChange: () => {},
   onFilterValuesChange: (name: string, val: string | string[]) => {},
@@ -139,6 +171,10 @@ const checkControlOpen = (val: string | null, defaultVisibility = true) => {
 export const MapProvider: React.FC<iMapProviderProps> = (props) => {
   const [map, setMap] = useState<MapboxMap | null>(null);
   const [filterActive, setFilterActive] = useState(false);
+  const [
+    activeFilterFeaturesLayer,
+    setActiveFilterFeaturesLayer,
+  ] = useState<iLayer | null>(null);
   const [activeZoomToLayer, setActiveZoomToLayer] = useState<string | null>(
     null
   );
@@ -146,6 +182,9 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
     name: "Streets",
     styleURL: "mapbox://styles/mapbox/streets-v11",
   });
+  const [filteredFeatures, setFilteredFeatures] = useState<iFilteredFeatures>(
+    {}
+  );
   const [basemapLayers] = useState<iBasemap[]>(DummyBasemapLayers);
   const {
     data: layers,
@@ -175,30 +214,39 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
 
   const [controls, setControls] = useState<iControls>({
     drawer: {
+      persistState: true,
       visible: checkControlOpen(
         sessionStorage.getItem("sk_drawer_control"),
         true
       ),
     },
     basemap: {
+      persistState: true,
       visible: checkControlOpen(
         sessionStorage.getItem("sk_basemap_control"),
         false
       ),
     },
     layers: {
+      persistState: true,
       visible: checkControlOpen(
         sessionStorage.getItem("sk_layers_control"),
         false
       ),
     },
     filterLayers: {
+      persistState: true,
       visible: checkControlOpen(
         sessionStorage.getItem("sk_filterLayers_control"),
         false
       ),
     },
+    filterLayerFeatures: {
+      persistState: false,
+      visible: false,
+    },
     dataViz: {
+      persistState: false,
       visible: checkControlOpen(
         sessionStorage.getItem("sk_dataViz_control"),
         false
@@ -248,6 +296,23 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
       setFilteredLayers(filtered);
     }
   }, [searchValue, layers, filterValues]); //eslint-disable-line
+
+  useEffect(() => {
+    if (layers.length !== 0) {
+      const filterEnabledLayers = layers.filter((layer) => layer.filterable);
+      const initFilterVals: iFilteredFeatures = {};
+      filterEnabledLayers.forEach((layer) => {
+        initFilterVals[layer.name] = {
+          layer_name: layer.name,
+          fields: layer.schema.reduce((acc: { [key: string]: any }, curr) => {
+            acc[curr.name] = [];
+            return acc;
+          }, {}),
+        };
+      });
+      setFilteredFeatures(initFilterVals);
+    }
+  }, [layers]);
 
   const resetFilters = () => {
     setSearchValue("");
@@ -327,10 +392,12 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
       const stateString = state?.toString();
 
       if (typeof state === "undefined" || state === null) {
-        sessionStorage.setItem(
-          `sk_${control}_control`,
-          (!newValues[control].visible).toString()
-        );
+        if (newValues[control].persistState) {
+          sessionStorage.setItem(
+            `sk_${control}_control`,
+            (!newValues[control].visible).toString()
+          );
+        }
 
         if (control === "basemap" && !newValues.basemap.visible) {
           newValues.layers.visible = false;
@@ -364,6 +431,8 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
   const onMapChange = (val: MapboxMap) => setMap(val);
   const onBasemapChange: Dispatcher<iActiveBasemap> = (val) =>
     setActiveBasemap(val);
+  const onFilterFeaturesLayerChange: Dispatcher<iLayer | null> = (val) =>
+    setActiveFilterFeaturesLayer(val);
   const onZoomToLayerChange: Dispatcher<string | null> = (val) =>
     setActiveZoomToLayer(val);
   const onLayerChange: Dispatcher<iLayer[]> = (val) => setLayers(val);
@@ -371,6 +440,8 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
     setFilteredLayers(val);
   const onVisibleLayerChange: Dispatcher<iLayer[]> = (val) =>
     setVisibleLayers(val);
+  const onFilteredFeaturesChange: Dispatcher<iFilteredFeatures> = (val) =>
+    setFilteredFeatures(val);
   const onFilterValuesChange = (name: string, val: string | string[]) => {
     setFilterValues((prevState) => {
       let newValues: iFilterValues = { ...prevState };
@@ -392,10 +463,12 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
       value={{
         map,
         controls,
+        activeFilterFeaturesLayer,
         activeZoomToLayer,
         activeBasemap,
         basemapLayers,
         layers,
+        filteredFeatures,
         filteredLayers,
         visibleLayers,
         layersLoaded,
@@ -404,6 +477,8 @@ export const MapProvider: React.FC<iMapProviderProps> = (props) => {
         filterActive,
         handleControlsVisibility,
         onMapChange,
+        onFilteredFeaturesChange,
+        onFilterFeaturesLayerChange,
         onZoomToLayerChange,
         onBasemapChange,
         onLayerChange,

@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 const TopNav: React.FC = () => {
   const classes = useStyles();
   let history = useHistory();
-  const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
 
   /**
    * Assign appropriate class name to menu item based
@@ -86,16 +86,10 @@ const TopNav: React.FC = () => {
     },
     {
       link: "map",
-      title: "Map",
+      title: "Station Map",
       activePath: "map",
       exact: true,
-      loginRequired: true,
-    },
-    {
-      link: "authenticated-home",
-      title: "Authenticated Home",
-      activePath: "authenticated-home",
-      loginRequired: true,
+      loginRequired: false,
     },
   ];
 
@@ -143,18 +137,6 @@ const TopNav: React.FC = () => {
             LRE Starter Kit Map
           </Typography>
           {MenuItems.map((item) => returnMenuItem(item, isAuthenticated, user))}
-          {isAuthenticated ? (
-            <Link className={handleActive("/logout")} onClick={() => logout()}>
-              Logout
-            </Link>
-          ) : (
-            <Link
-              className={handleActive("/login")}
-              onClick={() => loginWithRedirect()}
-            >
-              Login
-            </Link>
-          )}
         </Toolbar>
       </AppBar>
     </div>

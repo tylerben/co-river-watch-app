@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { useAuth0 } from "../../hooks/useAuth0";
 import axios from "axios";
+import { useAuth0 } from "hooks/useAuth0";
 import mapboxgl, { GeoJSONSource } from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import BasemapControl from "../BasemapControl/BasemapControl";
-import LayerControl from "../LayerControl/LayerControl";
-import { MapContext } from "../../pages/Map/MapProvider";
-import FiltersControls from "../FiltersControl/FiltersControl";
+import BasemapControl from "components/BasemapControl";
+import LayerControl from "components/LayerControl";
+import { MapContext } from "pages/Map/MapProvider";
+import FiltersControls from "components/FiltersControl";
+import LayerFeatureFilter from "components/LayerFeatureFilter";
 import DataVizControl from "../DataVizControl/DataVizControl";
 const turf = require("@turf/turf");
 
@@ -23,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
 }));
 
+const generateIncludesFilter = (values: any[], field: string) => {
+  return ["in", ["get", field], ["literal", values]];
+};
+
 const Map = () => {
   const classes = useStyles();
   const { getTokenSilently } = useAuth0();
@@ -33,9 +38,11 @@ const Map = () => {
     handleControlsVisibility,
     basemapLayers,
     activeBasemap,
+    activeFilterFeaturesLayer,
     activeZoomToLayer,
     onBasemapChange,
     filteredLayers,
+    filteredFeatures,
     visibleLayers,
     layersLoaded,
     onVisibleLayerChange,
@@ -118,6 +125,119 @@ const Map = () => {
   //   }
   // }, [draw, geometryData, mapIsLoaded]);
 
+  useEffect(() => {
+    if (typeof map !== "undefined" && map !== null) {
+      setTimeout(() => {
+        map.resize();
+      }, 500);
+    }
+  }, [controls?.drawer?.visible, map]); //eslint-disable-line
+
+  useEffect(() => {
+    if (layersLoaded && typeof map !== "undefined" && map !== null) {
+      visibleLayers?.map((layer) => {
+        if (
+          map.getSource(`${layer.name}-source`) &&
+          layer.spatial_data !== null &&
+          layer.paint !== null
+        ) {
+          const currLayer = filteredFeatures![layer.name];
+          if (currLayer) {
+            const filtersApplied = Object.entries(currLayer.fields).some(
+              ([k, v]) => v.length > 0
+            );
+            if (filtersApplied) {
+              const filters: any = ["any"];
+              Object.keys(currLayer.fields).forEach((key: string) => {
+                const filterValues = generateIncludesFilter(
+                  currLayer.fields[key],
+                  key
+                );
+                filters.push(filterValues);
+              });
+              map.setFilter(layer.name, filters);
+            } else {
+              map.setFilter(layer.name, undefined);
+            }
+          }
+        }
+        return layer;
+      });
+    }
+  }, [map, visibleLayers, filteredFeatures, layersLoaded]);
+
+  useEffect(() => {
+    if (
+      mapIsLoaded &&
+      layersLoaded &&
+      typeof map !== "undefined" &&
+      map !== null
+    ) {
+      visibleLayers?.map((layer) => {
+        if (
+          !map.getSource(`${layer.name}-source`) &&
+          layer.spatial_data !== null &&
+          layer.paint !== null
+        ) {
+          if (layer.layer_source_type === "geojson") {
+            map.addSource(`${layer.name}-source`, {
+              type: "geojson",
+              data: layer.spatial_data,
+            });
+
+            map.addLayer({
+              id: layer.name,
+              type: layer.geometry_type,
+              source: `${layer.name}-source`,
+              // "source-layer": `${layer.name}-source`,
+              layout: {
+                visibility: layer.visible ? "visible" : "none",
+              },
+              paint: layer.paint,
+            });
+          } else if (layer.layer_source_type === "tileset") {
+            map.addSource(`${layer.name}-source`, {
+              type: "vector",
+              url: layer.spatial_data as string,
+            });
+            map.addLayer({
+              id: layer.name,
+              type: layer.geometry_type,
+              source: `${layer.name}-source`,
+              "source-layer": layer.layer_source_name,
+              layout: {
+                visibility: layer.visible ? "visible" : "none",
+              },
+              paint: layer.paint,
+            });
+          }
+        }
+        return layer;
+      });
+      // map.setStyle(activeBasemap.styleURL);
+
+      visibleLayers?.map((layer) => {
+        if (
+          map.getSource(`${layer.name}-source`) &&
+          layer.spatial_data !== null &&
+          layer.paint !== null
+        ) {
+          if (typeof layer.spatial_data !== "string") {
+            (map.getSource(`${layer.name}-source`) as GeoJSONSource).setData(
+              layer.spatial_data
+            );
+          }
+          map.setLayoutProperty(
+            layer.name,
+            "visibility",
+            layer.visible ? "visible" : "none"
+          );
+        }
+        return layer;
+      });
+    }
+  }, [map, visibleLayers, layersLoaded, mapIsLoaded]);
+
   /**
    * Update the map style whenever the activeBasemap
    * changes
@@ -134,24 +254,41 @@ const Map = () => {
         visibleLayers?.map((layer) => {
           if (
             !map.getSource(`${layer.name}-source`) &&
-            layer.spatialData !== null &&
+            layer.spatial_data !== null &&
             layer.paint !== null
           ) {
-            map.addSource(`${layer.name}-source`, {
-              type: "geojson",
-              data: layer.spatial_data,
-            });
+            if (layer.layer_source_type === "geojson") {
+              map.addSource(`${layer.name}-source`, {
+                type: "geojson",
+                data: layer.spatial_data,
+              });
 
-            map.addLayer({
-              id: layer.name,
-              type: layer.geometry_type,
-              source: `${layer.name}-source`,
-              // "source-layer": `${layer.name}-source`,
-              layout: {
-                visibility: layer.visible ? "visible" : "none",
-              },
-              paint: layer.paint,
-            });
+              map.addLayer({
+                id: layer.name,
+                type: layer.geometry_type,
+                source: `${layer.name}-source`,
+                // "source-layer": `${layer.name}-source`,
+                layout: {
+                  visibility: layer.visible ? "visible" : "none",
+                },
+                paint: layer.paint,
+              });
+            } else if (layer.layer_source_type === "tileset") {
+              map.addSource(`${layer.name}-source`, {
+                type: "vector",
+                url: layer.spatial_data as string,
+              });
+              map.addLayer({
+                id: layer.name,
+                type: layer.geometry_type,
+                source: `${layer.name}-source`,
+                "source-layer": layer.layer_source_name,
+                layout: {
+                  visibility: layer.visible ? "visible" : "none",
+                },
+                paint: layer.paint,
+              });
+            }
           }
           return layer;
         });
@@ -159,12 +296,14 @@ const Map = () => {
         visibleLayers?.map((layer) => {
           if (
             map.getSource(`${layer.name}-source`) &&
-            layer.spatialData !== null &&
+            layer.spatial_data !== null &&
             layer.paint !== null
           ) {
-            (map.getSource(`${layer.name}-source`) as GeoJSONSource).setData(
-              layer.spatial_data
-            );
+            if (typeof layer.spatial_data !== "string") {
+              (map.getSource(`${layer.name}-source`) as GeoJSONSource).setData(
+                layer.spatial_data
+              );
+            }
             map.setLayoutProperty(
               layer.name,
               "visibility",
@@ -175,65 +314,7 @@ const Map = () => {
         });
       });
     }
-  }, [activeBasemap, map, layersLoaded]); //eslint-disable-line
-
-  useEffect(() => {
-    if (typeof map !== "undefined" && map !== null) {
-      setTimeout(() => {
-        map.resize();
-      }, 500);
-    }
-  }, [controls?.drawer?.visible, map]); //eslint-disable-line
-
-  useEffect(() => {
-    if (typeof map !== "undefined" && map !== null) {
-      map.on("load", () => {
-        visibleLayers?.map((layer) => {
-          if (
-            !map.getSource(`${layer.name}-source`) &&
-            layer.spatialData !== null &&
-            layer.paint !== null
-          ) {
-            console.log(layer);
-            map.addSource(`${layer.name}-source`, {
-              type: "geojson",
-              data: layer.spatial_data,
-            });
-
-            map.addLayer({
-              id: layer.name,
-              type: layer.geometry_type,
-              source: `${layer.name}-source`,
-              // "source-layer": `${layer.name}-source`,
-              layout: {
-                visibility: layer.visible ? "visible" : "none",
-              },
-              paint: layer.paint,
-            });
-          }
-          return layer;
-        });
-        // map.setStyle(activeBasemap.styleURL);
-      });
-      visibleLayers?.map((layer) => {
-        if (
-          map.getSource(`${layer.name}-source`) &&
-          layer.spatialData !== null &&
-          layer.paint !== null
-        ) {
-          (map.getSource(`${layer.name}-source`) as GeoJSONSource).setData(
-            layer.spatial_data
-          );
-          map.setLayoutProperty(
-            layer.name,
-            "visibility",
-            layer.visible ? "visible" : "none"
-          );
-        }
-        return layer;
-      });
-    }
-  }, [map, visibleLayers, activeBasemap]);
+  }, [activeBasemap, map, visibleLayers, layersLoaded]); //eslint-disable-line
 
   useEffect(() => {
     if (typeof map !== "undefined" && map !== null && map.isStyleLoaded()) {
@@ -299,6 +380,11 @@ const Map = () => {
         <FiltersControls
           open={controls?.filterLayers.visible}
           onClose={() => handleControlsVisibility("filterLayers")}
+        />
+        <LayerFeatureFilter
+          layer={activeFilterFeaturesLayer!}
+          open={controls?.filterLayerFeatures.visible}
+          onClose={() => handleControlsVisibility("filterLayerFeatures")}
         />
         <DataVizControl
           open={controls?.dataViz.visible}
