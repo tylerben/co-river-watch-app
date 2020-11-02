@@ -151,7 +151,7 @@ const MapDrawer: React.FC = () => {
                 width="95%"
               />
             </Box>
-            <Box m={1}>
+            {/* <Box m={1}>
               <Button
                 variant="contained"
                 disableElevation
@@ -164,7 +164,7 @@ const MapDrawer: React.FC = () => {
               >
                 Filter Layers
               </Button>
-            </Box>
+            </Box> */}
             <Box m={1}>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6}>
@@ -201,9 +201,9 @@ const MapDrawer: React.FC = () => {
             />
             <Divider />
           </DrawerTabPanel>
-          <DrawerTabPanel activeTab={activeTab} index={1}>
+          {/* <DrawerTabPanel activeTab={activeTab} index={1}>
             TEST2
-          </DrawerTabPanel>
+          </DrawerTabPanel> */}
         </div>
       )}
 

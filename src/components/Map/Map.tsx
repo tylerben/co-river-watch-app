@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useContext, useState } from "react";
+import ReactDOM from "react-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { useAuth0 } from "hooks/useAuth0";
@@ -7,6 +8,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import BasemapControl from "components/BasemapControl";
 import LayerControl from "components/LayerControl";
 import { MapContext } from "pages/Map/MapProvider";
+import { Popup } from "components/Popup";
 import FiltersControls from "components/FiltersControl";
 import LayerFeatureFilter from "components/LayerFeatureFilter";
 import DataVizControl from "../DataVizControl/DataVizControl";
@@ -51,6 +53,7 @@ const Map = () => {
     onZoomToLayerChange,
   } = useContext(MapContext);
   const mapContainer = useRef(null); // create a reference to the map container
+  const popUpRef = useRef(new mapboxgl.Popup({ offset: 15 }));
   const [draw, setDraw] = useState(new MapboxDraw()); //eslint-disable-line
   const [mapIsLoaded, setMapIsLoaded] = useState(false);
 
@@ -69,38 +72,58 @@ const Map = () => {
 
     const nav = new mapboxgl.NavigationControl();
     map.addControl(nav, "top-left");
-    map.addControl(draw, "top-left");
+    // map.addControl(draw, "top-left");
 
     map.on("load", () => {
       setMapIsLoaded(true);
     });
 
-    map.on("draw.create", updateDrawings);
-    map.on("draw.delete", updateDrawings);
-    map.on("draw.update", updateDrawings);
-
-    function updateDrawings(e: React.MouseEvent) {
-      let data = draw.getAll();
-      async function saveDrawings() {
-        try {
-          const token = await getTokenSilently();
-          const headers = { Authorization: `Bearer ${token}` };
-          await axios.put(
-            `${process.env.REACT_APP_ENDPOINT}/api/user-geometry`,
-            { features: data.features },
-            { headers }
-          );
-        } catch (err) {
-          // Is this error because we cancelled it ourselves?
-          if (axios.isCancel(err)) {
-            console.log(`call was cancelled`);
-          } else {
-            console.error(err);
-          }
-        }
+    // define on click functionality for the map
+    map.on("click", (e) => {
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: ["River Watch Stations"],
+      });
+      if (features.length > 0) {
+        const feature = features[0];
+        // create popup node
+        const popupNode = document.createElement("div");
+        ReactDOM.render(
+          <Popup activeFeature={feature} handleLink={() => {}} />,
+          popupNode
+        );
+        popUpRef.current
+          .setLngLat(e.lngLat)
+          .setDOMContent(popupNode)
+          .addTo(map);
       }
-      saveDrawings();
-    }
+    });
+
+    // map.on("draw.create", updateDrawings);
+    // map.on("draw.delete", updateDrawings);
+    // map.on("draw.update", updateDrawings);
+
+    // function updateDrawings(e: React.MouseEvent) {
+    //   let data = draw.getAll();
+    //   async function saveDrawings() {
+    //     try {
+    //       const token = await getTokenSilently();
+    //       const headers = { Authorization: `Bearer ${token}` };
+    //       await axios.put(
+    //         `${process.env.REACT_APP_ENDPOINT}/api/user-geometry`,
+    //         { features: data.features },
+    //         { headers }
+    //       );
+    //     } catch (err) {
+    //       // Is this error because we cancelled it ourselves?
+    //       if (axios.isCancel(err)) {
+    //         console.log(`call was cancelled`);
+    //       } else {
+    //         console.error(err);
+    //       }
+    //     }
+    //   }
+    //   saveDrawings();
+    // }
 
     onMapChange(map);
   }, []); //eslint-disable-line
@@ -379,10 +402,10 @@ const Map = () => {
           onZoomToLayerChange={onZoomToLayerChange}
           onClose={() => handleControlsVisibility("layers")}
         />
-        <FiltersControls
+        {/* <FiltersControls
           open={controls?.filterLayers.visible}
           onClose={() => handleControlsVisibility("filterLayers")}
-        />
+        /> */}
         <LayerFeatureFilter
           layer={activeFilterFeaturesLayer!}
           open={controls?.filterLayerFeatures.visible}

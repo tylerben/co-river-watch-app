@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
 const serverless = require("serverless-http");
@@ -91,8 +92,8 @@ router.get("/", async (req, res) => {
   let didCancel = false;
 
   const formData = {
-    username: "ben.tyler@lrewater.com",
-    password: "testTEST3!",
+    username: process.env.RW_DB_USERNAME,
+    password: process.env.RW_DB_PASSWORD,
     grant_type: "password",
     email: "",
     orgaspnetuserid: "",
@@ -124,24 +125,7 @@ router.get("/", async (req, res) => {
       // Ignore if we started fetching something else
       const layers = [
         {
-          name: "Major River Basins - Fill",
-          geometry_type: "fill",
-          legend: true,
-          enabled: true,
-          visible: true,
-          filterable: false,
-          layer_categories: [],
-          layer_source_type: "tileset",
-          layer_source_name: "basins-cznq7c",
-          spatial_data: "mapbox://river-watch.c15qj8jj",
-          paint: {
-            "fill-color": "#444",
-            "fill-opacity": 0.4,
-            "fill-outline-color": "#ffffff",
-          },
-        },
-        {
-          name: "Major River Basins - Outline",
+          name: "Major River Basins",
           geometry_type: "line",
           legend: false,
           enabled: true,
@@ -152,7 +136,7 @@ router.get("/", async (req, res) => {
           layer_source_name: "basins-cznq7c",
           spatial_data: "mapbox://river-watch.c15qj8jj",
           paint: {
-            "line-color": "#ffffff",
+            "line-color": "#444444",
             "line-width": 2,
           },
         },

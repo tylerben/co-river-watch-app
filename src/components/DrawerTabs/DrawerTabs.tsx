@@ -71,7 +71,7 @@ const DrawerTabs: React.FC<DrawerTabProps> = ({ activeTab, setActiveTab }) => {
       aria-label="sidebar-tabs-nav"
     >
       <Tab label={setTabLabel("Layers", LayersIcon)} {...a11yProps(0)} />
-      <Tab label={setTabLabel("Legend", ViewIcon)} {...a11yProps(1)} />
+      {/* <Tab label={setTabLabel("Legend", ViewIcon)} {...a11yProps(1)} /> */}
     </Tabs>
   );
 };

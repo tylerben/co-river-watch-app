@@ -115,7 +115,6 @@ const Autocomplete = (props) => {
     if (multiple) {
       const newEvent = { ...event };
       newEvent.target.name = name;
-      console.log(value);
       newEvent.target.value = value;
       onChange(newEvent, value);
     } else {
