@@ -50,12 +50,10 @@ const PopupItem: React.FC<PopupItemProps> = ({ title, value }) => {
 
 export const Popup: React.FC<PopupTypes> = ({ activeFeature, handleLink }) => {
   const classes = useStyles();
-  const { data } = useFetchData<{ report: boolean; data: boolean }>(
+  const { data } = useFetchData<{ report: string | null; data: string | null }>(
     `wsr/${activeFeature.properties?.WaterBodyId}`,
     [activeFeature]
   );
-
-  const downloadFile = () => {};
 
   return (
     <MuiThemeProvider theme={theme}>
@@ -90,16 +88,14 @@ export const Popup: React.FC<PopupTypes> = ({ activeFeature, handleLink }) => {
           {data.report && (
             <Box>
               <Button
+                target="_blank"
+                rel="noopener"
+                href={data.report}
                 size="small"
                 variant="contained"
                 color="primary"
                 disableElevation
                 fullWidth
-                onClick={() =>
-                  handleLink(
-                    `courses/${activeFeature.properties?.courseId}/${activeFeature.properties?.courseSlug}/running`
-                  )
-                }
               >
                 Download Report
               </Button>
@@ -108,16 +104,14 @@ export const Popup: React.FC<PopupTypes> = ({ activeFeature, handleLink }) => {
           {data.data && (
             <Box ml={1}>
               <Button
+                target="_blank"
+                rel="noopener"
+                href={data.data}
                 size="small"
                 variant="contained"
                 color="secondary"
                 disableElevation
                 fullWidth
-                onClick={() =>
-                  handleLink(
-                    `courses/${activeFeature.properties?.courseId}/${activeFeature.properties?.courseSlug}/running`
-                  )
-                }
               >
                 Download Data
               </Button>

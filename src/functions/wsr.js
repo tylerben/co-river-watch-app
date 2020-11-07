@@ -72,20 +72,35 @@ router.get("/:wbid", async (req, res) => {
       orderBy: "name",
     };
     const files = await drive.files.list(config);
-    // const download = await drive.files.get({
-    //   fileId: "1Re34_xtW6dup9BnJ0r1OWKbbHzYmZqse",
-    //   alt: "media",
-    // });
+
+    const report = files.data.files.filter(
+      (d) => d.mimeType === "application/pdf"
+    );
+    const data = files.data.files.filter(
+      (d) => d.mimeType === "application/vnd.ms-excel"
+    );
+
+    let reportLink = null;
+    let dataLink = null;
+    if (report.length > 0) {
+      const reportLinkRes = await drive.files.get({
+        fileId: report[0].id,
+        fields: "webContentLink",
+      });
+      reportLink = reportLinkRes.data.webContentLink;
+    }
+    if (data.length > 0) {
+      const dataLinkRes = await drive.files.get({
+        fileId: data[0].id,
+        fields: "webContentLink",
+      });
+      dataLink = dataLinkRes.data.webContentLink;
+    }
+
     res.json({
-      data:
-        files.data.files.filter(
-          (d) => d.mimeType === "application/vnd.ms-excel"
-        ).length > 0,
-      report:
-        files.data.files.filter((d) => d.mimeType === "application/pdf")
-          .length > 0,
+      report: reportLink,
+      data: dataLink,
     });
-    res.json(files.data.files);
   } catch (err) {
     console.error(err);
   }
