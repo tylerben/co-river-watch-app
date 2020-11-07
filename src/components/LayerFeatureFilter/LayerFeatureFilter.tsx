@@ -129,6 +129,7 @@ const LayerFeatureFilter: React.FC<FilterControlsProps> = ({
                   </Box>
                 );
               }
+              return null;
             })}
           </Box>
         </Box>

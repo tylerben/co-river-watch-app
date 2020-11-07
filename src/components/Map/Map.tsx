@@ -1,17 +1,15 @@
 import React, { useEffect, useRef, useContext, useState } from "react";
 import ReactDOM from "react-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import axios from "axios";
-import { useAuth0 } from "hooks/useAuth0";
 import mapboxgl, { GeoJSONSource } from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import BasemapControl from "components/BasemapControl";
 import LayerControl from "components/LayerControl";
 import { MapContext } from "pages/Map/MapProvider";
 import { Popup } from "components/Popup";
-import FiltersControls from "components/FiltersControl";
+// import FiltersControls from "components/FiltersControl";
 import LayerFeatureFilter from "components/LayerFeatureFilter";
-import DataVizControl from "../DataVizControl/DataVizControl";
+// import DataVizControl from "../DataVizControl/DataVizControl";
 const turf = require("@turf/turf");
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN as string;
@@ -32,7 +30,6 @@ const generateIncludesFilter = (values: any[], field: string) => {
 
 const Map = () => {
   const classes = useStyles();
-  const { getTokenSilently } = useAuth0();
   const {
     map,
     onMapChange,
@@ -411,10 +408,10 @@ const Map = () => {
           open={controls?.filterLayerFeatures.visible}
           onClose={() => handleControlsVisibility("filterLayerFeatures")}
         />
-        <DataVizControl
+        {/* <DataVizControl
           open={controls?.dataViz.visible}
           onClose={() => handleControlsVisibility("dataViz")}
-        />
+        /> */}
       </div>
     </>
   );

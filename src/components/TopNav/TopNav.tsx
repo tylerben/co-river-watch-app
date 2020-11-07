@@ -77,17 +77,24 @@ const TopNav: React.FC = () => {
 
   // Configure sidebar menu items
   const MenuItems: iMenuItem[] = [
-    {
-      link: "",
-      title: "Home",
-      activePath: "/",
-      exact: true,
-      loginRequired: false,
-    },
+    // {
+    //   link: "",
+    //   title: "Home",
+    //   activePath: "/",
+    //   exact: true,
+    //   loginRequired: false,
+    // },
     {
       link: "map",
       title: "Station Map",
       activePath: "map",
+      exact: true,
+      loginRequired: false,
+    },
+    {
+      link: "reports",
+      title: "Reports",
+      activePath: "reports",
       exact: true,
       loginRequired: false,
     },
@@ -134,7 +141,7 @@ const TopNav: React.FC = () => {
       <AppBar position="fixed" elevation={0}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            LRE Starter Kit Map
+            Colorado River Watch Data Explorer
           </Typography>
           {MenuItems.map((item) => returnMenuItem(item, isAuthenticated, user))}
         </Toolbar>
