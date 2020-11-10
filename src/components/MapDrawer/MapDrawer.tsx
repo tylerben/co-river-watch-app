@@ -10,7 +10,6 @@ import {
   Grid,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import FilterIcon from "@material-ui/icons/FilterList";
 import HideIcon from "@material-ui/icons/VisibilityOff";
 import DrawerTabs from "../DrawerTabs/DrawerTabs";
 import DrawerTabPanel from "../DrawerTabPanel/DrawerTabPanel";

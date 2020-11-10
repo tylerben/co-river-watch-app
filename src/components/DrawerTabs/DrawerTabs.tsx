@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Tabs, Tab } from "@material-ui/core";
 import LayersIcon from "@material-ui/icons/Layers";
-import ViewIcon from "@material-ui/icons/Category";
+// import ViewIcon from "@material-ui/icons/Category";
 
 export type DrawerTabProps = {
   activeTab: number;

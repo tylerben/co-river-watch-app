@@ -10,11 +10,21 @@ const app = express();
 
 const router = express.Router();
 
+const checkWbidName = (name1, name2) => {
+  const name1Lower = name1.toLowerCase();
+  const name2Lower = name2.toLowerCase();
+  return name1.includes(name2);
+};
+
 /**
  * Get all watershed reports
  */
 router.get("/", async (req, res) => {
   let didCancel = false;
+  const drive = google.drive({
+    version: "v3",
+    auth: process.env.GOOGLE_API_KEY,
+  });
 
   try {
     const formData = {
@@ -43,8 +53,39 @@ router.get("/", async (req, res) => {
       { headers: { Authorization: `Bearer ${token.data.access_token}` } }
     );
 
+    const folderId = "1R5VWshdiFLgDKoKseV9DR_U2SA1XmWpT";
+    const config = {
+      q: `'${folderId}' in parents`,
+      orderBy: "name",
+    };
+    const files = await drive.files.list(config);
+    const joinedData = data.data.map((wbid) => {
+      const report = files.data.files.filter((d) => {
+        return (
+          d.mimeType === "application/pdf" && checkWbidName(d.name, wbid.Id)
+        );
+      });
+      const reportData = files.data.files.filter((d) => {
+        return (
+          d.mimeType === "application/vnd.ms-excel" &&
+          checkWbidName(d.name, wbid.Id)
+        );
+      });
+      return {
+        ...wbid,
+        reportLink:
+          report.length > 0
+            ? `https://drive.google.com/uc?id=${report[0].id}&export=download`
+            : null,
+        dataLink:
+          reportData.length > 0
+            ? `https://drive.google.com/uc?id=${reportData[0].id}&export=download`
+            : null,
+      };
+    });
+
     if (!didCancel) {
-      res.json(data.data);
+      res.json(joinedData);
     }
   } catch (err) {
     // Is this error because we cancelled it ourselves?
