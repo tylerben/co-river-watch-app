@@ -13,7 +13,7 @@ const router = express.Router();
 const checkWbidName = (name1, name2) => {
   const name1Lower = name1.toLowerCase();
   const name2Lower = name2.toLowerCase();
-  return name1.includes(name2);
+  return name1Lower.includes(name2Lower);
 };
 
 /**
