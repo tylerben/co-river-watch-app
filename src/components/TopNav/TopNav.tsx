@@ -98,6 +98,13 @@ const TopNav: React.FC = () => {
       exact: true,
       loginRequired: false,
     },
+    {
+      link: "basin-summaries",
+      title: "Basin Summaries",
+      activePath: "basin-summaries",
+      exact: false,
+      loginRequired: false,
+    },
   ];
 
   const returnMenuItem = (

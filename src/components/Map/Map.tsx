@@ -341,11 +341,12 @@ const Map = () => {
   useEffect(() => {
     if (typeof map !== "undefined" && map !== null && map.isStyleLoaded()) {
       const layer = filteredLayers?.find((d) => d.name === activeZoomToLayer);
-      const bbox = turf.bbox(layer?.spatial_data);
-
-      map.fitBounds(bbox, {
-        padding: 100,
-      });
+      if (layer) {
+        const bbox = turf.bbox(layer?.spatial_data);
+        map.fitBounds(bbox, {
+          padding: 100,
+        });
+      }
     }
   }, [activeZoomToLayer, map]); //eslint-disable-line
 

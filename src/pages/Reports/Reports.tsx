@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Container } from "@material-ui/core";
+import { Button, Container, Typography } from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/GetApp";
 import ReportsLayout from "components/ReportsLayout";
 import MaterialTable from "material-table";
@@ -21,6 +21,7 @@ const useStyles = makeStyles(({ breakpoints, mixins, spacing }) => ({
   toolbar: mixins.toolbar,
   container: {
     marginTop: spacing(6),
+    marginBottom: spacing(6),
   },
 }));
 
@@ -63,6 +64,17 @@ const Reports: React.FC = (props) => {
         <div className={classes.content}>
           <div className={classes.toolbar} />
           <Container maxWidth="lg" className={classes.container}>
+            <Typography variant="body1" paragraph>
+              The following table can be used to explore Watershed Reports
+              published by River Watch. The Reports provide a summary fo water
+              quality conditions for different Water Body IDs (WBIDs) around the
+              state. A Water Body ID is an administrative classification given
+              to a stream segment by the Colorado Department of Public Health
+              and Environment that is used when setting water quality standards
+              and accessing water quality. Each Watershed Report contains a PDF
+              report as well as an Excel spreadsheet that contains the
+              accompanying data used to write the report.
+            </Typography>
             <MaterialTable
               data={data}
               columns={[

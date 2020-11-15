@@ -10,6 +10,8 @@ import { MapProvider } from "./pages/Map/MapProvider";
 
 const MapPage = React.lazy(() => import("./pages/Map"));
 const ReportsPage = React.lazy(() => import("./pages/Reports"));
+const BasinSummariesPage = React.lazy(() => import("./pages/BasinSummaries"));
+const BasinSummaryPage = React.lazy(() => import("./pages/BasinSummary"));
 
 const App = () => {
   const { loading } = useAuth0();
@@ -42,6 +44,24 @@ const App = () => {
               render={() => (
                 <MapProvider>
                   <ReportsPage />
+                </MapProvider>
+              )}
+            />
+            <Route
+              path="/basin-summaries"
+              exact
+              render={() => (
+                <MapProvider>
+                  <BasinSummariesPage />
+                </MapProvider>
+              )}
+            />
+            <Route
+              path="/basin-summaries/:basin"
+              exact
+              render={() => (
+                <MapProvider>
+                  <BasinSummaryPage />
                 </MapProvider>
               )}
             />
