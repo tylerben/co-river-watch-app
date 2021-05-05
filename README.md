@@ -1,3 +1,7 @@
+# Colorado River Watch Data Explorer Application
+
+This is a standalone application designed for exploring data and information related to Colorado River Watch.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
