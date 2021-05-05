@@ -215,7 +215,7 @@ const Map = () => {
               layout: {
                 visibility: layer.visible ? "visible" : "none",
               },
-              paint: layer.paint,
+              paint: layer.paint as any,
             });
           } else if (layer.layer_source_type === "tileset") {
             map.addSource(`${layer.name}-source`, {
@@ -230,7 +230,7 @@ const Map = () => {
               layout: {
                 visibility: layer.visible ? "visible" : "none",
               },
-              paint: layer.paint,
+              paint: layer.paint as any,
             });
           }
         }
@@ -293,7 +293,7 @@ const Map = () => {
                 layout: {
                   visibility: layer.visible ? "visible" : "none",
                 },
-                paint: layer.paint,
+                paint: layer.paint as any,
               });
             } else if (layer.layer_source_type === "tileset") {
               map.addSource(`${layer.name}-source`, {
@@ -308,7 +308,7 @@ const Map = () => {
                 layout: {
                   visibility: layer.visible ? "visible" : "none",
                 },
-                paint: layer.paint,
+                paint: layer.paint as any,
               });
             }
           }

@@ -14,6 +14,9 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     right: 0,
     backgroundColor: "white",
+    "& img": {
+      maxWidth: 150,
+    },
   },
 }));
 
